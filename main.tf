@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.0.0"
+      version = "=4.4.0"
     }
   }
 }
@@ -10,6 +10,7 @@ terraform {
 # Configuración del proveedor de Azure
 provider "azurerm" {
   features {}
+  subscription_id = "58d6e3f1-8dbd-4f6b-a645-654bb7589eb0"
 }
 
 # Crear un grupo de recursos
@@ -64,12 +65,12 @@ resource "azurerm_linux_web_app" "main" {
 
   site_config {
     application_stack {
-      node_version = "16-lts"
+      node_version = "20-lts"
     }
   }
 
   app_settings = {
-    "WEBSITE_NODE_DEFAULT_VERSION" = "~16"
+    "WEBSITE_NODE_DEFAULT_VERSION" = "~20-lts"
     "DB_SERVER"                    = azurerm_mssql_server.main.fully_qualified_domain_name
     "DB_NAME"                      = azurerm_mssql_database.main.name
     "DB_USER"                      = azurerm_mssql_server.main.administrator_login
