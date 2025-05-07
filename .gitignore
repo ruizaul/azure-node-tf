@@ -1,0 +1,58 @@
+# Archivos de estado de Terraform
+.terraform/**
+.terraform
+**/.terraform/**
+**/.terraform/providers/**
+terraform-provider-*
+.terraform/providers/registry.terraform.io/**
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+crash.log
+crash.*.log
+
+# Archivos de proveedores (explícitamente excluir los archivos grandes)
+.terraform/providers/registry.terraform.io/hashicorp/azurerm/3.0.2/darwin_arm64/terraform-provider-azurerm_v3.0.2_x5
+.terraform/providers/registry.terraform.io/hashicorp/random/3.7.2/darwin_arm64/terraform-provider-random_v3.7.2_x5
+
+# Archivos de variables con información sensible
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Archivos de configuración de CLI
+.terraformrc
+terraform.rc
+
+# Archivos de configuración local e información sensible
+terraform.tfvars
+.terraform.tfstate.lock.info
+
+# Archivos generados de Terraform
+terraform.plan
+.terraform.lock.info
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Logs
+*.log
+logs/
+
+# Archivos temporales
+*.tmp
+.temp/
+tmp/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+.terraform
