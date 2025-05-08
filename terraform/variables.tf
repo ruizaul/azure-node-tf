@@ -1,36 +1,35 @@
 variable "resource_group_name" {
   description = "Nombre del grupo de recursos"
   type        = string
-  default     = "api-recursos"
+  # Los valores se encuentran en terraform.tfvars
 }
 
 variable "location" {
   description = "Ubicación de los recursos de Azure"
   type        = string
-  default     = "Canada Central"
+  # Los valores se encuentran en terraform.tfvars
 }
 
 variable "sql_server_name" {
   description = "Nombre del servidor SQL"
   type        = string
-  default     = "servidor-sql-api"
+  # Los valores se encuentran en terraform.tfvars
 }
 
 variable "sql_database_name" {
   description = "Nombre de la base de datos SQL"
   type        = string
-  default     = "api-database"
+  # Los valores se encuentran en terraform.tfvars
 }
 
 variable "sql_admin_username" {
-  description = "Nombre de usuario del administrador SQL"
+  description = "Nombre de usuario del administrador SQL (solo necesario en la primera ejecución)"
   type        = string
-  default     = "adminuser"
+  sensitive   = true
 }
 
 variable "sql_admin_password" {
-  description = "Contraseña del administrador SQL"
+  description = "Contraseña del administrador SQL (solo necesario en la primera ejecución)"
   type        = string
-  default     = "P@ssw0rd1234!" # Cambiar en producción o usar variables de entorno
   sensitive   = true
 } 

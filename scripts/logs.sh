@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Directorio actual del script
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TERRAFORM_DIR="$SCRIPT_DIR/../terraform"
+cd "$TERRAFORM_DIR"
+
 # Obtener el nombre de la aplicación web desde los outputs de Terraform
 WEBAPP_NAME=$(terraform output -raw webapp_url | cut -d'/' -f3 | cut -d'.' -f1)
 

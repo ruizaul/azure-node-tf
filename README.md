@@ -6,6 +6,14 @@ Este proyecto contiene la configuración de Terraform para desplegar una infraes
 - Un servidor de SQL Azure con una base de datos
 - Un App Service Plan
 - Una Web App de Linux para alojar una API Node.js
+- Azure Key Vault para almacenar secretos de manera segura
+
+## Estructura del proyecto
+
+- `terraform/`: Contiene todos los archivos de Terraform para desplegar la infraestructura
+- `scripts/`: Scripts de utilidad para despliegue y monitoreo
+- `db/`: Scripts para la migración de la base de datos
+- `routes/`: Rutas de la API Node.js
 
 ## Requisitos previos
 
@@ -21,34 +29,44 @@ Este proyecto contiene la configuración de Terraform para desplegar una infraes
 az login
 ```
 
-2. Inicializar Terraform:
+2. Usar el script de despliegue:
 
 ```bash
-terraform init
+cd node-tf/scripts
+./deploy.sh --init  # Para la primera vez (inicialización)
 ```
 
-3. Ver los cambios que se aplicarán:
+**Nota importante:** Las credenciales solo se solicitan una vez durante la primera ejecución. Las ejecuciones subsecuentes utilizarán automáticamente las credenciales almacenadas en Azure Key Vault.
+
+Para despliegues posteriores, simplemente ejecuta:
 
 ```bash
-terraform plan
+cd node-tf/scripts
+./deploy.sh
 ```
 
-4. Aplicar los cambios:
+3. Para ver los logs de la aplicación:
 
 ```bash
-terraform apply
+cd node-tf/scripts
+./logs.sh
 ```
 
-5. Cuando termines, puedes destruir la infraestructura:
+4. Cuando termines, puedes destruir la infraestructura:
 
 ```bash
+cd node-tf/terraform
 terraform destroy
 ```
 
 ## Variables
 
-Las variables se encuentran definidas en `variables.tf`. Puedes cambiar sus valores predeterminados creando un archivo `terraform.tfvars` o pasando los valores como argumentos al comando `terraform apply`.
+Las variables se encuentran definidas en `terraform/variables.tf`. Puedes cambiar sus valores predeterminados en el archivo `terraform/terraform.tfvars`.
+
+## Gestión de secretos
+
+Este proyecto utiliza Azure Key Vault para gestionar secretos de forma segura. Las credenciales sensibles como las contraseñas de la base de datos solo se ingresan una vez durante la creación inicial del Key Vault. Para más detalles sobre esta implementación, consulta [README-KEY-VAULT.md](README-KEY-VAULT.md).
 
 ## Conexión a la base de datos
 
-Después de aplicar la configuración, Terraform mostrará la cadena de conexión para la base de datos SQL. Puedes usar esta cadena en tu aplicación Node.js para conectarte a la base de datos.
+Después de aplicar la configuración, Terraform mostrará la cadena de conexión para la base de datos SQL. La aplicación obtiene las credenciales automáticamente de Azure Key Vault en tiempo de ejecución, sin necesidad de almacenarlas en el código o variables de entorno.
