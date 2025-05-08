@@ -5,7 +5,7 @@ const swaggerUI = require("swagger-ui-express");
 
 // Inicializar la aplicación Express
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 // Middleware para parsear JSON
 app.use(express.json());
@@ -22,8 +22,8 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://localhost:${port}`,
-        description: "Servidor de desarrollo",
+        url: `/`,
+        description: "Servidor",
       },
     ],
   },
@@ -37,19 +37,44 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 // Importar rutas
 const usuariosRoutes = require("./routes/usuarios");
+const healthRoutes = require("./routes/health");
 
 // Usar rutas
 app.use("/api", usuariosRoutes);
+app.use("/api", healthRoutes);
 
-// Ruta base
+// Ruta base para verificación de salud
 app.get("/", (req, res) => {
-  res.json({ mensaje: "¡Bienvenido a la API sencilla!" });
+  res.json({
+    mensaje: "¡Bienvenido a la API sencilla!",
+    entorno: process.env.NODE_ENV,
+    dbServer: process.env.DB_SERVER,
+    dbName: process.env.DB_NAME,
+    keyVaultUri: process.env.KEYVAULT_URI,
+  });
+});
+
+// Manejo de errores para la aplicación
+app.use((err, req, res, next) => {
+  console.error("Error no manejado:", err);
+  res.status(500).json({
+    error: "Error interno del servidor",
+    message: err.message,
+  });
 });
 
 // Iniciar el servidor
 app.listen(port, () => {
-  console.log(`Servidor ejecutándose en http://localhost:${port}`);
-  console.log(
-    `Documentación Swagger disponible en http://localhost:${port}/api-docs`
-  );
+  console.log(`Servidor ejecutándose en el puerto ${port}`);
+  console.log(`Documentación Swagger disponible en /api-docs`);
+
+  // Imprimir variables de entorno (sin mostrar valores sensibles)
+  console.log("Variables de entorno disponibles:");
+  console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+  console.log(`DB_SERVER: ${process.env.DB_SERVER}`);
+  console.log(`DB_NAME: ${process.env.DB_NAME}`);
+  console.log(`KEYVAULT_URI: ${process.env.KEYVAULT_URI}`);
+
+  // Indicar que el servidor está listo
+  console.log("Servidor listo para recibir solicitudes");
 });

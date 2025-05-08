@@ -111,6 +111,15 @@ resource "azurerm_linux_web_app" "main" {
     application_stack {
       node_version = "20-lts"
     }
+    
+    # Usar nuestro script de inicio en lugar del comando directo
+    app_command_line = "bash ./scripts/startup.sh"
+    
+    # Configuración de contenedor 
+    always_on                = true
+    ftps_state               = "Disabled"
+    health_check_path        = "/"
+    health_check_eviction_time_in_min = 5
   }
 
   # Asignar identidad para que la aplicación pueda acceder al Key Vault
@@ -120,9 +129,36 @@ resource "azurerm_linux_web_app" "main" {
 
   app_settings = {
     "WEBSITE_NODE_DEFAULT_VERSION" = "~20-lts"
+    "NODE_ENV"                     = "production"
+    "PORT"                         = "8080"
     "DB_SERVER"                    = azurerm_mssql_server.main.fully_qualified_domain_name
     "DB_NAME"                      = azurerm_mssql_database.main.name
     "KEYVAULT_URI"                 = fileexists("${path.module}/.keyvault_created") ? data.azurerm_key_vault.existing[0].vault_uri : null
-    # Las credenciales ya no se almacenan directamente en las configuraciones de la aplicación
+    
+    # Credenciales de fallback
+    "DB_USER"                      = var.sql_admin_username
+    "DB_PASSWORD"                  = var.sql_admin_password
+    
+    # Configurar logs para depuración
+    "WEBSITE_RUN_FROM_PACKAGE"     = "1"
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+    
+    # Configuración para permitir identidad administrada
+    "AZURE_CLIENT_ID"              = ""  # Se llenará automáticamente por la identidad administrada del sistema
+    "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
+  }
+  
+  # Configurar un tiempo de espera más largo para la sincronización de implementación
+  logs {
+    application_logs {
+      file_system_level = "Information"
+    }
+    
+    http_logs {
+      file_system {
+        retention_in_days = 7
+        retention_in_mb   = 35
+      }
+    }
   }
 } 
