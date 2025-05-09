@@ -2,10 +2,20 @@ require("dotenv").config();
 const express = require("express");
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUI = require("swagger-ui-express");
+const cors = require("cors");
 
 // Inicializar la aplicación Express
 const app = express();
 const port = process.env.PORT || 8080;
+
+// Configurar CORS para permitir cualquier origen
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // Middleware para parsear JSON
 app.use(express.json());
